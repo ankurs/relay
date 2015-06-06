@@ -5,6 +5,8 @@
 #define PREFIX ""
 WebServer webserver(PREFIX, 80);
 
+SYSTEM_MODE(SEMI_AUTOMATIC);
+
 void helloCmd(WebServer &server, WebServer::ConnectionType type, char *, bool)
 {
   server.httpSuccess();
@@ -147,6 +149,8 @@ void setup()
   switchPin(D2, LOW);
   switchPin(D3, LOW);
 
+  WiFi.connect();
+
   webserver.setDefaultCommand(&helloCmd);
 
   webserver.addCommand("index.html", &helloCmd);
@@ -172,8 +176,11 @@ void setup()
 
 void loop()
 {
-  char buff[64];
-  int len = 64;
+  if (WiFi.ready())
+  {
+    char buff[64];
+    int len = 64;
 
-  webserver.processConnection(buff, &len);
+    webserver.processConnection(buff, &len);
+  }
 }
